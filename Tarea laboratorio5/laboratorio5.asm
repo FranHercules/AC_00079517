@@ -17,31 +17,25 @@ org 100h
 
 ;Iteracion principal
     ITERAR:
-        call movercursor ;llamada a mover cursor
-        MOV CL, [cadena+SI] ;Colocar en CL el caracter actual de la cadena
-        call escribircaracter; Llamada a escribircaracter
-        INC SI ; SE SUMA 1 A SI PARA CONTINUAR CON EL SIGUIENTE CARACTER
-        INC DL ; SE SUMA 1 A DL PARA MOVER CURSOR A LA SIGUIENTE COLUMNA
-        INC DI ; contador para terminar la ejecución del programa al llegar a 10
+        call movercursor
+        MOV CL, [cadena+SI] 
+        call escribircaracter
+        INC SI 
+        INC DL
+        INC DI
 
-        CMP DI, 34d ; Comparación de DI con 10d
-        JB ITERAR ; si DI es menor a 10, entonces que siga iterando.
+        CMP DI, 34d 
+        JB ITERAR ;Saltara mientras no se haya recorrido toda la cadena
 
-        jmp esperartecla ; de caso contrario, que salte a esperar tecla.
+        jmp esperartecla
 
     modotexto: 
-        ;Similar a usar una función en alto nivel
-        ;Modotexto(parametro1)
-        ;Donde: parametro1= AL (modo gráfico deseado)
-        MOV AH, 0h ; activa modo texto
-        MOV AL, 03h ; modo gráfico deseado
+        MOV AH, 0h ;modo texto
+        MOV AL, 03h
         INT 10h
         RET
     movercursor:
-        ;Similar a usar una función en alto nivel
-        ;MoverCursor(parametro1, parametro2, parametro3,...)
-        ;Donde: Parametro1 = DH (fila del cursor), parametro2 = DL (columna del cursor), parametro 3 = BH (número de página)
-        MOV AH, 02h ; posiciona el cursor en pantalla.
+        MOV AH, 02h
         MOV BH, 0h
 
         ;comparacion para el primer nombre
@@ -52,10 +46,6 @@ org 100h
         CMP DI, 18d
         JE incrementardh
 
-        ;comparacion para el primer apellido
-        CMP DI, 18d
-        JE incrementardh
-
         ;comparacion para el segundo apellido
         CMP DI, 25d
         JE incrementardh
@@ -63,13 +53,10 @@ org 100h
         INT 10h
         RET
     escribircaracter:
-        ;Similar a usar una función en alto nivel
-        ;EscribirCaracter(parametro1, parametro2, parametro3,...)
-        ;Donde: parametro1 = AL (caracter), parametro2 = BH (número de página), parametro3 = BL (estilo del texto en 8 bits)...
-        MOV AH, 0Ah ; escribe caracter en pantalla según posición del cursor
-        MOV AL, CL ; denotamos el caracter a escribir en pantalla, los valores deben ser según código hexadecimal de tabla ASCII
-        MOV BH, 0h ; número de página
-        MOV CX, 1h ; número de veces a escribir el caracter
+        MOV AH, 0Ah
+        MOV AL, CL
+        MOV BH, 0h
+        MOV CX, 1h
         INT 10h
         RET
 
@@ -80,9 +67,9 @@ org 100h
         MOV DL, 19
         RET
 
+    ;Detener la ejecucion con cualquier tecla
     esperartecla:
-    ;Se espera que el usuario presione una tecla
-        MOV AH, 00h ;espera buffer del teclado para avanzar en la siguiente instrucción
+        MOV AH, 00h
         INT 16h
     exit:
         int 20h
